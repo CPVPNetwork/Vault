@@ -89,17 +89,21 @@ public class Vault extends JavaPlugin {
     private String currentVersionTitle = "";
     private ServicesManager sm;
     private Vault plugin;
+    private VaultScheduler scheduler;
 
     @Override
     public void onDisable() {
         // Remove all Service Registrations
         getServer().getServicesManager().unregisterAll(this);
-        Bukkit.getScheduler().cancelTasks(this);
+        if (scheduler != null) {
+            scheduler.cancelAll();
+        }
     }
 
     @Override
     public void onEnable() {
         plugin = this;
+        scheduler = new VaultScheduler(this);
         log = this.getLogger();
         currentVersionTitle = getDescription().getVersion().split("-")[0];
         currentVersion = Double.valueOf(currentVersionTitle.replaceFirst("\\.", ""));
@@ -117,7 +121,7 @@ public class Vault extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new VaultListener(), this);
         // Schedule to check the version every 30 minutes for an update. This is to update the most recent 
         // version so if an admin reconnects they will be warned about newer versions.
-        this.getServer().getScheduler().runTask(this, new Runnable() {
+        scheduler.runGlobal(new Runnable() {
 
             @Override
             public void run() {
@@ -131,7 +135,7 @@ public class Vault extends JavaPlugin {
                 }
                 perm.setDescription("Allows a user or the console to check for vault updates");
 
-                getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
+                scheduler.runAsyncTimer(new Runnable() {
 
                     @Override
                     public void run() {
