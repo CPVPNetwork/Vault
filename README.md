@@ -14,6 +14,11 @@ wish to perform configuration changes, this can be done via a configuration
 file but should not be necessary in most cases. See the "Advanced
 Configuration" section for more information.
 
+Vault runs on Bukkit, Spigot and Paper, as well as region-threaded servers
+such as Folia and [Canvas](https://canvasmc.io). On those servers Vault
+automatically uses the region-aware schedulers in place of the legacy
+Bukkit scheduler.
+
 
 ## Why Vault?
 I have no preference which library suits your plugin and development efforts
